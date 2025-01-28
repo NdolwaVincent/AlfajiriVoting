@@ -4,100 +4,101 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Alfajiri Academy Malaba - Vote Tally and Voter Status</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
   <style>
     body {
       font-family: 'Inter', sans-serif;
-      background-color: #f0fdf4; /* Light green background */
+      background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
     }
 
-    h1, h2, h3 {
-      font-weight: 700;
-    }
-
-    th {
-      background-color: #10b981; /* Green header */
-      color: white;
-    }
-
-    .table-container {
-      overflow-x: auto;
-    }
-
-    /* Scrollbar styling */
+    /* Custom scrollbar for better UI */
     ::-webkit-scrollbar {
       width: 8px;
     }
     ::-webkit-scrollbar-thumb {
-      background: #10b981; /* Green scrollbar */
+      background: #4f46e5;
       border-radius: 4px;
     }
     ::-webkit-scrollbar-thumb:hover {
-      background: #059669; /* Darker green on hover */
+      background: #4338ca;
     }
   </style>
 </head>
-<body class="bg-gray-100 min-h-screen flex flex-col">
-  <!-- Main Content Wrapper -->
-  <div class="bg-white shadow-lg rounded-xl p-6 w-full max-w-7xl mx-auto flex-grow flex flex-col">
-    <!-- Header -->
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+  <div class="bg-white shadow-lg rounded-2xl p-6 w-full max-w-7xl">
     <h1 class="text-center text-green-600 text-4xl md:text-5xl font-bold mb-8">
       Alfajiri Academy Malaba
     </h1>
     <p class="text-center text-gray-700 text-lg md:text-xl mb-10">
       <strong>2025 STUDENT'S COUNCIL ELECTIONS</strong>
     </p>
-
     <!-- Summary Section -->
-    <section id="summary" class="mb-8 p-4 rounded-lg shadow bg-green-500 text-white flex-grow flex flex-col items-center justify-center">
-      <h2 class="text-2xl md:text-3xl font-bold mb-4">Summary</h2>
-      <p id="totalVoters" class="text-sm md:text-base font-medium"></p>
-      <div id="leadingAspirants" class="mt-4 space-y-2 text-sm md:text-base font-medium"></div>
-    </section>
-
+    <div class="mb-8 bg-indigo-100 p-6 rounded-lg shadow-lg">
+      <h2 class="text-3xl font-bold text-indigo-800 text-center mb-4">LIVE STREAMING</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-center">
+        <div class="bg-white p-4 rounded-lg shadow-md">
+          <h3 class="text-xl font-bold text-green-600">Leading Candidate</h3>
+          <p id="leadingCandidate" class="text-lg font-medium text-gray-800 mt-2">Loading...</p>
+        </div>
+        <div class="bg-white p-4 rounded-lg shadow-md">
+          <h3 class="text-xl font-bold text-blue-600">Voters Who Voted</h3>
+          <p id="votedCount" class="text-lg font-medium text-gray-800 mt-2">Loading...</p>
+        </div>
+        <div class="bg-white p-4 rounded-lg shadow-md">
+          <h3 class="text-xl font-bold text-red-600">Voters Who Did Not Vote</h3>
+          <p id="notVotedCount" class="text-lg font-medium text-gray-800 mt-2">Loading...</p>
+        </div>
+      </div>
+    </div>
     <!-- Results Section -->
-    <section class="mb-12 flex-grow flex flex-col">
-      <h2 class="text-3xl text-green-600 font-bold text-center mb-6">Vote Tally</h2>
-      <div id="resultsTable" class="flex flex-col gap-8 flex-grow"></div>
-    </section>
+    <div class="mb-12">
+      <h2 class="text-3xl font-bold text-indigo-600 mb-6 text-center">Vote Tally</h2>
+      <div id="resultsTable" class="flex flex-col gap-8">
+        <!-- Position groups will be inserted here dynamically -->
+      </div>
+    </div>
 
     <!-- Voter Status Section -->
-    <section class="flex-grow flex flex-col">
-      <h2 class="text-3xl text-green-600 font-bold text-center mb-6">Voter Status</h2>
+    <div>
+      <h2 class="text-3xl font-bold text-indigo-600 mb-6 text-center">Voter Status</h2>
 
-      <!-- Voted Table -->
-      <div class="table-container mb-8 flex-grow">
-        <h3 class="text-2xl text-green-600 font-bold mb-4">Voted</h3>
+      <!-- Voted Voters Table -->
+      <div class="overflow-x-auto mb-8">
+        <h3 class="text-2xl font-bold text-green-600 mb-4">Voted</h3>
         <table class="min-w-full bg-white border border-gray-300 rounded-lg shadow-sm">
-          <thead>
+          <thead class="bg-indigo-100">
             <tr>
-              <th class="px-6 py-3 text-left font-semibold">S/N</th>
-              <th class="px-6 py-3 text-left font-semibold">Voter Name</th>
-              <th class="px-6 py-3 text-left font-semibold">Grade</th>
-              <th class="px-6 py-3 text-left font-semibold">Status</th>
+              <th class="px-6 py-3 border-b text-left font-semibold">#</th>
+              <th class="px-6 py-3 border-b text-left font-semibold">Voter Name</th>
+              <th class="px-6 py-3 border-b text-left font-semibold">Grade</th>
+              <th class="px-6 py-3 border-b text-left font-semibold">Status</th>
             </tr>
           </thead>
-          <tbody id="votedTable" class="divide-y divide-gray-200"></tbody>
+          <tbody id="votedTable" class="bg-white divide-y divide-gray-200">
+            <!-- Voted data will be inserted here dynamically -->
+          </tbody>
         </table>
       </div>
 
-      <!-- Not Voted Table -->
-      <div class="table-container flex-grow">
-        <h3 class="text-2xl text-red-600 font-bold mb-4">Not Voted</h3>
+      <!-- Not Voted Voters Table -->
+      <div class="overflow-x-auto">
+        <h3 class="text-2xl font-bold text-red-600 mb-4">Not Voted</h3>
         <table class="min-w-full bg-white border border-gray-300 rounded-lg shadow-sm">
-          <thead>
+          <thead class="bg-indigo-100">
             <tr>
-              <th class="px-6 py-3 text-left font-semibold">S/N</th>
-              <th class="px-6 py-3 text-left font-semibold">Voter Name</th>
-              <th class="px-6 py-3 text-left font-semibold">Grade</th>
-              <th class="px-6 py-3 text-left font-semibold">Status</th>
+              <th class="px-6 py-3 border-b text-left font-semibold">#</th>
+              <th class="px-6 py-3 border-b text-left font-semibold">Voter Name</th>
+              <th class="px-6 py-3 border-b text-left font-semibold">Grade</th>
+              <th class="px-6 py-3 border-b text-left font-semibold">Status</th>
             </tr>
           </thead>
-          <tbody id="notVotedTable" class="divide-y divide-gray-200"></tbody>
+          <tbody id="notVotedTable" class="bg-white divide-y divide-gray-200">
+            <!-- Not voted data will be inserted here dynamically -->
+          </tbody>
         </table>
       </div>
-    </section>
+    </div>
   </div>
 
   <script type="module">
@@ -133,8 +134,6 @@
 
           // Group aspirants by position
           const groupedByPosition = {};
-          let totalVotes = 0;
-          let leadingAspirants = {};
 
           Object.keys(aspirants).forEach((key) => {
             const aspirant = aspirants[key];
@@ -142,36 +141,17 @@
               groupedByPosition[aspirant.position] = [];
             }
             groupedByPosition[aspirant.position].push(aspirant);
-            totalVotes += aspirant.votes || 0;
           });
 
-          // Calculate leading aspirants and update the summary
+          // Calculate total votes
+          let totalVotes = 0;
           Object.keys(groupedByPosition).forEach((position) => {
-            let leading = { aspirant: null, votes: 0 };
             groupedByPosition[position].forEach((aspirant) => {
-              if (aspirant.votes > leading.votes) {
-                leading = { aspirant, votes: aspirant.votes };
-              }
+              totalVotes += aspirant.votes || 0;
             });
-            leadingAspirants[position] = leading;
           });
 
-          // Display summary (total voters, leading aspirants)
-          document.getElementById("totalVoters").innerText = `Total Voters who voted: ${Object.keys(aspirants).length}`;
-
-          const leadingHTML = Object.keys(leadingAspirants).map((position) => {
-            const aspirant = leadingAspirants[position].aspirant;
-            const percentage = totalVotes > 0 ? ((aspirant.votes || 0) / totalVotes * 100).toFixed(2) : 0;
-            return `
-              <p class="text-lg text-gray-800 font-semibold">
-                Leading in ${position}: ${aspirant.fullName} with ${aspirant.votes} votes (${percentage}%)
-              </p>
-            `;
-          }).join('');
-
-          document.getElementById("leadingAspirants").innerHTML = leadingHTML;
-
-          // Display vote tally
+          // Display aspirants' details grouped by position with percentages
           Object.keys(groupedByPosition).forEach((position) => {
             const group = groupedByPosition[position];
             let groupHTML = `
@@ -209,52 +189,46 @@
 
     // Fetch and display voter status with grade, numbering, and separate tables for voted and not voted
     async function loadVoterStatus() {
-  const votersRef = ref(database, "registrations/voters");
-  try {
-    const snapshot = await get(votersRef);
-    if (snapshot.exists()) {
-      const voters = snapshot.val();
+      const votersRef = ref(database, "registrations/voters");
+      try {
+        const snapshot = await get(votersRef);
+        if (snapshot.exists()) {
+          const voters = snapshot.val();
 
-      const votedTable = document.getElementById("votedTable");
-      const notVotedTable = document.getElementById("notVotedTable");
+          const votedTable = document.getElementById("votedTable");
+          const notVotedTable = document.getElementById("notVotedTable");
 
-      votedTable.innerHTML = "";
-      notVotedTable.innerHTML = "";
+          votedTable.innerHTML = "";
+          notVotedTable.innerHTML = "";
 
-      let countVoted = 1;
-      let countNotVoted = 1;
-      let totalVoted = 0; // Count the total number of voters who voted
+          let countVoted = 1;
+          let countNotVoted = 1;
 
-      // Display voters' data in separate tables based on their vote status
-      Object.keys(voters).forEach((voter) => {
-        const voterData = voters[voter];
-        const row = `
-          <tr>
-            <td class="px-4 py-2 border-b text-left">${voterData.voted ? countVoted++ : countNotVoted++}</td>
-            <td class="px-4 py-2 border-b text-left">${voter}</td>
-            <td class="px-4 py-2 border-b text-left">${voterData.gradeLevel || 'N/A'}</td>
-            <td class="px-4 py-2 border-b text-left">${voterData.voted ? 'Voted' : 'Not Voted'}</td>
-          </tr>
-        `;
+          // Display voters' data in separate tables based on their vote status
+          Object.keys(voters).forEach((voter) => {
+            const voterData = voters[voter];
+            const row = `
+              <tr>
+                <td class="px-4 py-2 border-b text-left">${voterData.voted ? countVoted++ : countNotVoted++}</td>
+                <td class="px-4 py-2 border-b text-left">${voter}</td>
+                <td class="px-4 py-2 border-b text-left">${voterData.grade || 'N/A'}</td> <!-- Adjust to use gradeLevel -->
+                <td class="px-4 py-2 border-b text-left">${voterData.voted ? 'Voted' : 'Not Voted'}</td>
+              </tr>
+            `;
 
-        if (voterData.voted) {
-          totalVoted++; // Increment the count of voters who voted
-          votedTable.innerHTML += row;
+            if (voterData.voted) {
+              votedTable.innerHTML += row;
+            } else {
+              notVotedTable.innerHTML += row;
+            }
+          });
         } else {
-          notVotedTable.innerHTML += row;
+          alert("No voters found in the database.");
         }
-      });
-
-      // Update the Summary section with the total number of voters who voted
-      document.getElementById("totalVoters").innerText = `Total Voters who voted: ${totalVoted}`;
-    } else {
-      alert("No voters found in the database.");
+      } catch (error) {
+        console.error("Error fetching voter status:", error);
+      }
     }
-  } catch (error) {
-    console.error("Error fetching voter status:", error);
-  }
-}
-
 
     // Real-time updates for the vote tally
     const aspirantsRef = ref(database, "registrations/aspirants");
@@ -263,7 +237,45 @@
     // Real-time updates for voter status
     const votersRef = ref(database, "registrations/voters");
     onValue(votersRef, loadVoterStatus);  // Listen for changes to voters' data
+async function loadSummary() {
+      const aspirantsRef = ref(database, "registrations/aspirants");
+      const votersRef = ref(database, "registrations/voters");
+      let totalVoters = 0, voted = 0, notVoted = 0, leadingCandidate = "N/A", maxVotes = 0;
 
+      try {
+        const aspirantsSnapshot = await get(aspirantsRef);
+        const votersSnapshot = await get(votersRef);
+
+        if (aspirantsSnapshot.exists()) {
+          const aspirants = aspirantsSnapshot.val();
+          Object.values(aspirants).forEach(aspirant => {
+            if ((aspirant.votes || 0) > maxVotes) {
+              maxVotes = aspirant.votes || 0;
+              leadingCandidate = `${aspirant.fullName} (${aspirant.position})`;
+            }
+          });
+        }
+
+        if (votersSnapshot.exists()) {
+          const voters = votersSnapshot.val();
+          totalVoters = Object.keys(voters).length;
+          Object.values(voters).forEach(voter => {
+            if (voter.voted) voted++;
+          });
+          notVoted = totalVoters - voted;
+        }
+
+        document.getElementById("leadingCandidate").textContent = leadingCandidate;
+        document.getElementById("votedCount").textContent = `${voted} out of ${totalVoters}`;
+        document.getElementById("notVotedCount").textContent = notVoted;
+
+      } catch (error) {
+        console.error("Error loading summary:", error);
+      }
+    }
+    
+
+    loadSummary();
     // Initialize the results page
     loadVoteTally();
     loadVoterStatus();
