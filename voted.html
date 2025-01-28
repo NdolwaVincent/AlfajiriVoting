@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aspirants Voting</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+    <div class="bg-white shadow-xl rounded-2xl p-8 w-full max-w-4xl">
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-8">Aspirants Voting</h1>
+
+        <h2 class="text-xl font-semibold mb-4" id="voterDetails"></h2>
+
+        <div class="space-y-6">
+            <h3 class="text-lg font-semibold text-gray-700">Select Aspirants to Vote For:</h3>
+            <div id="aspirantList" class="space-y-4">
+                <!-- Aspirants will be dynamically inserted here -->
+            </div>
+            <button id="submitVotes" class="w-full py-3 px-4 bg-indigo-600 text-white font-bold rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">Submit Vote</button>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js';
+        import { getDatabase, ref, get, update } from 'https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js';
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyD6k4OlLYnotuuChAjLBoHmqfv9-iwrlfY",
+            authDomain: "alfajiri-database.firebaseapp.com",
+            databaseURL: "https://alfajiri-database-default-rtdb.firebaseio.com",
+            projectId: "alfajiri-database",
+            storageBucket: "alfajiri-database.appspot.com",
+            messagingSenderId: "310417854615",
+            appId: "1:310417854615:web:6f65002a119caeaf9119d2",
+            measurementId: "G-21TBZCRBHM"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const database = getDatabase(app);
+
+        // Get voter details from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const voterName = urlParams.get('voterName');
+
+        // Fetch voter details
+        async function fetchVoterDetails() {
+            const voterRef = ref(database, `registrations/voters/${voterName}`);
+            const snapshot = await get(voterRef);
+            const voterDetails = document.getElementById('voterDetails');
+            if (snapshot.exists()) {
+                const voter = snapshot.val();
+                voterDetails.innerText = `Voting as: ${voter.fullName}, Grade: ${voter.grade}`;
+            } else {
+                voterDetails.innerText = 'Voter not found';
+            }
+        }
+
+        // Fetch aspirants from the database
+        async function fetchAspirants() {
+            const aspirantsRef = ref(database, 'registrations/aspirants/');
+            const snapshot = await get(aspirantsRef);
+            const aspirantList = document.getElementById('aspirantList');
+
+            if (snapshot.exists()) {
+                const aspirants = snapshot.val();
+                for (const aspirantName in aspirants) {
+                    const aspirant = aspirants[aspirantName];
+                    const div = document.createElement('div');
+                    div.classList.add('flex items-center space-x-4');
+                    div.innerHTML = `
+                        <input type="checkbox" id="${aspirantName}" class="h-4 w-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                        <label for="${aspirantName}" class="text-gray-700">${aspirant.fullName} - ${aspirant.position}</label>
+                    `;
+                    aspirantList.appendChild(div);
+                }
+            } else {
+                aspirantList.innerHTML = '<p>No aspirants available for voting.</p>';
+            }
+        }
+
+        // Submit the vote
+        document.getElementById('submitVotes').addEventListener('click', async function() {
+            const selectedAspirants = [];
+            const aspirants = document.querySelectorAll('#aspirantList input:checked');
+            aspirants.forEach(input => selectedAspirants.push(input.id));
+
+            // Update voter status to "voted" and record the voted aspirants
+            const voterRef = ref(database, `registrations/voters/${voterName}`);
+            await update(voterRef, { status: 'voted', votedAspirants: selectedAspirants });
+
+            alert('Your vote has been submitted!');
+            window.location.href = 'voters_list.html'; // Redirect back to voters list
+        });
+
+        // Fetch voter details and aspirants when the page loads
+        fetchVoterDetails();
+        fetchAspirants();
+    </script>
+</body>
+</html>

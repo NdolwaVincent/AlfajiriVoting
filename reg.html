@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Voting Registration</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        #registrationForm input, 
+        #registrationForm select {
+            transition: all 0.3s ease;
+        }
+
+        #registrationForm input:focus, 
+        #registrationForm select:focus {
+            outline: none;
+            border-color: #4F46E5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.4);
+        }
+
+        #registrationForm button {
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        #registrationForm button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+    <div class="bg-white shadow-xl rounded-2xl p-8 w-full max-w-4xl">
+        <!-- IEBC Logo -->
+        <div class="flex justify-center mb-8">
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/IEBC_Logo.png/200px-IEBC_Logo.png" alt="IEBC Logo" class="w-28 h-28">
+        </div>
+
+        <h1 class="text-3xl font-bold text-center text-gray-800 mb-8">School Voting Registration</h1>
+
+        <form id="registrationForm" class="space-y-6">
+            <!-- User Type -->
+            <div>
+                <label for="userType" class="block text-sm font-semibold text-gray-700">Register as:</label>
+                <select id="userType" class="mt-2 block w-full rounded-lg border border-gray-300 shadow-sm px-4 py-3 text-gray-700 focus:ring-indigo-500 focus:border-indigo-500" required>
+                    <option value="">Select</option>
+                    <option value="voter">Voter</option>
+                    <option value="aspirant">Aspirant</option>
+                </select>
+            </div>
+
+            <!-- Full Name -->
+            <div>
+                <label for="fullName" class="block text-sm font-semibold text-gray-700">Full Name:</label>
+                <input type="text" id="fullName" placeholder="Enter your full name" class="mt-2 block w-full rounded-lg border border-gray-300 shadow-sm px-4 py-3 text-gray-700 focus:ring-indigo-500 focus:border-indigo-500" required>
+            </div>
+
+            <!-- Aspirant Section -->
+            <div id="aspirantSection" class="hidden">
+                <div>
+                    <label for="position" class="block text-sm font-semibold text-gray-700">Position Applying For:</label>
+                    <select id="position" class="mt-2 block w-full rounded-lg border border-gray-300 shadow-sm px-4 py-3 text-gray-700 focus:ring-indigo-500 focus:border-indigo-500">
+                        <option value="">Select</option>
+                        <option value="president">President</option>
+                        <option value="deputyPresident">Deputy President</option>
+                        <option value="academicPrefect">Academic Prefect</option>
+                        <option value="sanitaryPrefect">Sanitary Prefect</option>
+                        <option value="skillsPrefect">Skills Prefect</option>
+                        <option value="musicDiningPrefect">Music & Dining Prefect</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="grade" class="block text-sm font-semibold text-gray-700">Grade:</label>
+                    <select id="grade" class="mt-2 block w-full rounded-lg border border-gray-300 shadow-sm px-4 py-3 text-gray-700 focus:ring-indigo-500 focus:border-indigo-500">
+                        <option value="">Select</option>
+                        <option value="Grade 1">Grade 1</option>
+                        <option value="Grade 2">Grade 2</option>
+                        <option value="Grade 3">Grade 3</option>
+                        <option value="Grade 4">Grade 4</option>
+                        <option value="Grade 5">Grade 5</option>
+                        <option value="Grade 6">Grade 6</option>
+                        <option value="Grade 7">Grade 7</option>
+                        <option value="Grade 8">Grade 8</option>
+                        <option value="Grade 9">Grade 9</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="deputyName" class="block text-sm font-semibold text-gray-700">Name of Deputy:</label>
+                    <input type="text" id="deputyName" placeholder="Enter deputy's name" class="mt-2 block w-full rounded-lg border border-gray-300 shadow-sm px-4 py-3 text-gray-700 focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+                <!-- Capture Image -->
+                <div>
+                    <label for="aspirantImage" class="block text-sm font-semibold text-gray-700">Upload Your Image:</label>
+                    <input type="file" id="aspirantImage" accept="image/*" capture="environment" class="mt-2 block w-full rounded-lg border border-gray-300 shadow-sm px-4 py-3 text-gray-700 focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+                <!-- Image Preview -->
+                <div id="aspirantImagePreview" class="mt-4 hidden">
+                    <label for="aspirantImage" class="block text-sm font-semibold text-gray-700">Uploaded Image:</label>
+                    <img id="imagePreview" class="w-28 h-28 mt-2" alt="Uploaded Image">
+                </div>
+            </div>
+
+            <!-- Voter Section -->
+            <div id="voterSection" class="hidden">
+                <div>
+                    <label for="voterGrade" class="block text-sm font-semibold text-gray-700">Grade:</label>
+                    <select id="voterGrade" class="mt-2 block w-full rounded-lg border border-gray-300 shadow-sm px-4 py-3 text-gray-700 focus:ring-indigo-500 focus:border-indigo-500">
+                        <option value="">Select</option>
+                        <option value="Grade 1">Grade 1</option>
+                        <option value="Grade 2">Grade 2</option>
+                        <option value="Grade 3">Grade 3</option>
+                        <option value="Grade 4">Grade 4</option>
+                        <option value="Grade 5">Grade 5</option>
+                        <option value="Grade 6">Grade 6</option>
+                        <option value="Grade 7">Grade 7</option>
+                        <option value="Grade 8">Grade 8</option>
+                        <option value="Grade 9">Grade 9</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="status" class="block text-sm font-semibold text-gray-700">Status:</label>
+                    <select id="status" class="mt-2 block w-full rounded-lg border border-gray-300 shadow-sm px-4 py-3 text-gray-700 focus:ring-indigo-500 focus:border-indigo-500">
+                        <option value="notVoted">Not Voted</option>
+                        <option value="voted">Voted</option>
+                    </select>
+                </div>
+            </div>
+
+            <button type="submit" class="w-full py-3 px-4 bg-indigo-600 text-white font-bold rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">Register</button>
+        </form>
+
+        <div id="successMessage" class="mt-6 hidden text-green-600 font-semibold text-center">Registration successful!</div>
+    </div>
+
+   <script type="module">
+    // Firebase and other imports
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js';
+    import { getDatabase, ref, set } from 'https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js';
+    import { getStorage, ref as storageRef, uploadBytes, getDownloadURL } from 'https://www.gstatic.com/firebasejs/9.17.1/firebase-storage.js';
+
+    // Firebase configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyD6k4OlLYnotuuChAjLBoHmqfv9-iwrlfY",
+        authDomain: "alfajiri-database.firebaseapp.com",
+        databaseURL: "https://alfajiri-database-default-rtdb.firebaseio.com",
+        projectId: "alfajiri-database",
+        storageBucket: "alfajiri-database.appspot.com",
+        messagingSenderId: "310417854615",
+        appId: "1:310417854615:web:6f65002a119caeaf9119d2",
+        measurementId: "G-21TBZCRBHM"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
+    const storage = getStorage(app);
+
+    // Show/hide sections based on user type
+    const userType = document.getElementById('userType');
+    const aspirantSection = document.getElementById('aspirantSection');
+    const voterSection = document.getElementById('voterSection');
+
+    userType.addEventListener('change', () => {
+        aspirantSection.classList.add('hidden');
+        voterSection.classList.add('hidden');
+
+        if (userType.value === 'aspirant') aspirantSection.classList.remove('hidden');
+        if (userType.value === 'voter') voterSection.classList.remove('hidden');
+    });
+
+    // Handle form submission
+   document.getElementById('registrationForm').addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    const userTypeValue = userType.value;
+    const fullName = document.getElementById('fullName').value;
+    const grade = userTypeValue === 'aspirant' ? document.getElementById('grade').value : document.getElementById('voterGrade').value;
+    const status = document.getElementById('status') ? document.getElementById('status').value : '';
+    const position = document.getElementById('position') ? document.getElementById('position').value : '';
+    const deputyName = document.getElementById('deputyName') ? document.getElementById('deputyName').value : '';
+    let aspirantImageUrl = '';
+
+    // If an aspirant uploaded an image, handle the image upload to Firebase Storage
+    if (userTypeValue === 'aspirant' && document.getElementById('aspirantImage').files.length > 0) {
+        const file = document.getElementById('aspirantImage').files[0];
+        const imageRef = storageRef(storage, `aspirants/${file.name}`);
+        const snapshot = await uploadBytes(imageRef, file);
+        aspirantImageUrl = await getDownloadURL(imageRef); // Get the download URL
+        document.getElementById('imagePreview').src = aspirantImageUrl; // Display the image in the preview section
+        document.getElementById('aspirantImagePreview').classList.remove('hidden'); // Show the image preview section
+    }
+
+    if (userTypeValue === 'aspirant') {
+        // Store aspirants under 'registrations/aspirants'
+        const aspirantRef = ref(database, 'registrations/aspirants/' + fullName);
+        set(aspirantRef, {
+            userType: userTypeValue,
+            fullName: fullName,
+            grade: grade,
+            position: position,
+            deputyName: deputyName,
+            aspirantImageUrl: aspirantImageUrl,
+        });
+    } else if (userTypeValue === 'voter') {
+        // Store voters by grade under 'registrations/voters/{grade}'
+        const voterRef = ref(database, 'registrations/voters/' + '/' + fullName);
+        set(voterRef, {
+            userType: userTypeValue,
+            fullName: fullName,
+            grade: grade,
+            status: status,
+        });
+    }
+
+    document.getElementById('successMessage').classList.remove('hidden');
+    setTimeout(() => {
+        document.getElementById('registrationForm').reset();
+        document.getElementById('successMessage').classList.add('hidden');
+    }, 2000);
+});
+
+</script>
+
+</body>
+</html>

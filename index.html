@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Voting Dashboard - Alfajiri Academy</title>
+    <style>
+        /* Global Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: white;
+            color: #333;
+        }
+
+        header {
+            background-color: green;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header img {
+            width: 50px;
+            height: auto;
+        }
+
+        nav ul {
+            list-style-type: none;
+            display: flex;
+            gap: 20px;
+        }
+
+        nav ul li {
+            display: inline;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-size: 18px;
+        }
+
+        .content-section {
+            padding: 30px;
+            text-align: center;
+            background-color: #f4f4f4;
+            margin: 20px 0;
+        }
+
+        button {
+            background-color: green;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            margin-top: 20px;
+        }
+
+        button:hover {
+            background-color: darkgreen;
+        }
+
+        footer {
+            background-color: green;
+            color: white;
+            text-align: center;
+            padding: 10px;
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            nav ul {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .content-section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTyVk1IqUPVxAvUzYe3P5ZO60Sv6VktTuPiaw&s" alt="IEBC Logo">
+            <h1>Alfajiri Academy Malaba</h1>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#register-voters">Register Voters</a></li>
+                <li><a href="#vote">Vote</a></li>
+                <li><a href="#tallying">Tallying</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section id="register-voters" class="content-section">
+        <h2>Register Voters</h2>
+        <p>Click the button below to register voters.</p>
+        <button onclick="window.location.href='reg.html'">Go to Register Voters</button>
+    </section>
+
+    <section id="vote" class="content-section">
+        <h2>Vote</h2>
+        <p>Click the button below to vote.</p>
+        <button onclick="window.location.href='asp.html'">Go to Voting Page</button>
+    </section>
+
+    <section id="tallying" class="content-section">
+        <h2>Tallying</h2>
+        <p>Click the button below to view the tallying results.</p>
+        <button onclick="window.location.href='vote.html'">Go to Tallying Page</button>
+    </section>
+
+    <footer>
+        <p>&copy; 2025 Alfajiri Academy Malaba. All Rights Reserved.</p>
+    </footer>
+</body>
+</html>

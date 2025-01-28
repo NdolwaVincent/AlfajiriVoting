@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alfajiri Academy Malaba</title>
+
+    <!-- Firebase SDK -->
+   
+
+    <!-- Styles -->
+    <style>
+        /* General Reset and Body Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7fc;
+            color: #333;
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        /* Header Styles */
+        header {
+            background-color: #00695c;
+            color: white;
+            padding: 15px 0;
+            text-align: center;
+            width: 100%;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            font-size: 2.5em;
+        }
+
+        /* Side Navigation Styles */
+        .sidenav {
+            height: 100%;
+            width: 250px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #004d40;
+            padding-top: 20px;
+            color: white;
+            font-size: 1.2em;
+            z-index: 100;
+            box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .sidenav a {
+            padding: 15px;
+            text-decoration: none;
+            color: white;
+            display: block;
+            border-bottom: 1px solid #00796b;
+        }
+
+        .sidenav a:hover {
+            background-color: #00796b;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            margin-left: 270px;
+            padding: 40px 20px;
+            width: 100%;
+            flex-grow: 1;
+        }
+
+        /* Section Visibility */
+        section {
+            display: none;
+        }
+
+        .active-section {
+            display: block;
+        }
+
+        /* Common Styles for Content */
+        h2 {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+            color: #00796b;
+        }
+
+        form {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        label {
+            font-size: 1em;
+            margin-bottom: 10px;
+            display: block;
+        }
+
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0 20px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            font-size: 1em;
+        }
+
+        button {
+            background-color: #00796b;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 1.1em;
+        }
+
+        button:hover {
+            background-color: #004d40;
+        }
+
+        .card {
+            background-color: white;
+            padding: 20px;
+            margin: 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .card h3 {
+            margin-bottom: 10px;
+            color: #00695c;
+        }
+
+        .card p {
+            font-size: 1em;
+            margin-bottom: 10px;
+        }
+
+        footer {
+            background-color: #004d40;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        footer p {
+            font-size: 1.1em;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Header -->
+<header>
+    <h1>Alfajiri Academy Malaba</h1>
+</header>
+
+<!-- Side Navigation -->
+<div class="sidenav">
+    <a href="javascript:void(0)" onclick="showSection('learner-management')">Manage Learners</a>
+    <a href="javascript:void(0)" onclick="showSection('fees-management')">Manage Fees</a>
+    <a href="javascript:void(0)" onclick="showSection('parent-access')">Parent Access</a>
+    <a href="javascript:void(0)" onclick="showSection('calendar')">School Calendar</a>
+    <a href="javascript:void(0)" onclick="showSection('contact')">Contact Us</a>
+</div>
+
+<!-- Main Content -->
+<div class="main-content">
+    <!-- Manage Learners Section -->
+    <section id="learner-management" class="active-section">
+        <h2>Manage Learners' Records</h2>
+        <form id="add-learner-form">
+            <label for="name">Name:</label>
+            <input type="text" id="name" placeholder="Enter Learner's Name" required>
+
+            <label for="grade">Grade:</label>
+            <select id="grade">
+                <option value="1">Grade 1</option>
+                <option value="2">Grade 2</option>
+                <option value="3">Grade 3</option>
+                <option value="4">Grade 4</option>
+                <option value="5">Grade 5</option>
+                <option value="6">Grade 6</option>
+                <option value="7">Grade 7</option>
+                <option value="8">Grade 8</option>
+                <option value="9">Grade 9</option>
+            </select>
+
+            <label for="dob">Date of Birth:</label>
+            <input type="date" id="dob" required>
+
+            <label for="phone">Phone:</label>
+            <input type="text" id="phone" placeholder="Enter Learner's Phone Number" required>
+
+            <label for="status">Status:</label>
+            <select id="status">
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+            </select>
+
+            <label for="admission-number">Admission Number:</label>
+            <input type="text" id="admission-number" placeholder="Enter Admission Number" required>
+
+            <label for="parent-name">Parent Name:</label>
+            <input type="text" id="parent-name" placeholder="Enter Parent's Name" required>
+
+            <label for="gender">Gender:</label>
+            <select id="gender">
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+            </select>
+
+            <button type="submit">Add Learner</button>
+        </form>
+    </section>
+
+    <!-- Other sections remain the same -->
+
+</div>
+
+<!-- Footer -->
+<footer>
+    <p>&copy; 2025 Alfajiri Academy Malaba. All rights reserved.</p>
+</footer>
+
+<!-- JavaScript -->
+<script type="module">
+  // Firebase and other imports
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js';
+  import { getDatabase, ref, push } from 'https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js';
+
+  // Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyD6k4OlLYnotuuChAjLBoHmqfv9-iwrlfY",
+    authDomain: "alfajiri-database.firebaseapp.com",
+    databaseURL: "https://alfajiri-database-default-rtdb.firebaseio.com",
+    projectId: "alfajiri-database",
+    storageBucket: "alfajiri-database.appspot.com",
+    messagingSenderId: "310417854615",
+    appId: "1:310417854615:web:6f65002a119caeaf9119d2",
+    measurementId: "G-21TBZCRBHM"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const database = getDatabase(app);
+
+  // Function to show and hide sections
+  function showSection(sectionId) {
+    const sections = document.querySelectorAll('section');
+    sections.forEach(section => {
+      section.classList.remove('active-section');
+    });
+
+    const section = document.getElementById(sectionId);
+    section.classList.add('active-section');
+  }
+
+  // Add learner to Firebase
+  document.getElementById('add-learner-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const name = document.getElementById('name').value;
+    const grade = document.getElementById('grade').value;
+    const dob = document.getElementById('dob').value;
+    const phone = document.getElementById('phone').value;
+    const status = document.getElementById('status').value;
+    const admissionNumber = document.getElementById('admission-number').value;
+    const parentName = document.getElementById('parent-name').value;
+    const gender = document.getElementById('gender').value;
+
+    const learnerData = {
+      name,
+      grade,
+      dob,
+      phone,
+      status,
+      admissionNumber,
+      parentName,
+      gender
+    };
+
+    // Push data to Firebase Realtime Database
+    const learnersRef = ref(database, 'learners');
+    push(learnersRef, learnerData)
+      .then(() => {
+        alert('Learner Added Successfully!');
+        document.getElementById('add-learner-form').reset();
+      })
+      .catch(error => {
+        alert('Error adding learner: ' + error.message);
+      });
+  });
+
+  // Submit fees payment to Firebase
+  document.getElementById('add-fees-form').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    const learnerId = document.getElementById('learner-id').value;
+    const feesPaid = document.getElementById('fees-paid').value;
+
+    const feesData = {
+      learnerId,
+      feesPaid
+    };
+
+    const feesRef = ref(database, 'fees');
+    push(feesRef, feesData)
+      .then(() => {
+        alert('Fees Payment Submitted!');
+        document.getElementById('add-fees-form').reset();
+      })
+      .catch(error => {
+        alert('Error submitting payment: ' + error.message);
+      });
+  });
+
+  // Fetch student records for parent access
+  function fetchStudentRecords() {
+    const parentId = document.getElementById('parent-id').value;
+
+    // Fetch records from Firebase
+    const learnersRef = ref(database, 'learners');
+    learnersRef.orderByChild('parentName').equalTo(parentId).once('value', function(snapshot) {
+      const recordsDiv = document.getElementById('student-records');
+      recordsDiv.innerHTML = '';
+
+      if (snapshot.exists()) {
+        snapshot.forEach(function(childSnapshot) {
+          const learnerData = childSnapshot.val();
+          const learnerInfo = document.createElement('p');
+          learnerInfo.textContent = `Name: ${learnerData.name}, Grade: ${learnerData.grade}`;
+          recordsDiv.appendChild(learnerInfo);
+        });
+      } else {
+        recordsDiv.innerHTML = '<p>No records found for this parent ID.</p>';
+      }
+    });
+  }
+</script>
+
+
+</body>
+</html>

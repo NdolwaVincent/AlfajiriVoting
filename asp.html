@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>School Voting System</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+    }
+    button {
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3);
+    }
+    .hidden-table {
+      display: none;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+  <div class="bg-white shadow-xl rounded-2xl p-8 w-full max-w-4xl">
+    <h1 class="text-3xl font-bold text-center text-gray-800 mb-8">School Voting System</h1>
+
+    <!-- Voter Lists -->
+    <div id="voterSection">
+      <h2 class="text-xl font-bold text-indigo-600 mb-4">Voter List</h2>
+      
+      <!-- Table for Voters Who Have Not Voted -->
+      <h3 class="text-lg font-bold text-gray-700 mb-2">Voters Who Have Not Voted</h3>
+      <table class="min-w-full table-auto text-left mb-6">
+        <thead>
+          <tr class="bg-gray-200">
+            <th class="px-4 py-2 text-gray-600">Voter ID</th>
+            <th class="px-4 py-2 text-gray-600">Grade</th>
+            <th class="px-4 py-2 text-gray-600">Select</th>
+          </tr>
+        </thead>
+        <tbody id="notVotedBody" class="divide-y divide-gray-200"></tbody>
+      </table>
+      
+      <!-- Table for Voters Who Have Already Voted (Initially Hidden) -->
+      <h3 class="text-lg font-bold text-gray-700 mb-2">Voters Who Have Already Voted</h3>
+      <table class="min-w-full table-auto text-left hidden-table" id="votedTable">
+        <thead>
+          <tr class="bg-gray-200">
+            <th class="px-4 py-2 text-gray-600">Voter ID</th>
+            <th class="px-4 py-2 text-gray-600">Grade</th>
+            <th class="px-4 py-2 text-gray-600">Voting Status</th>
+          </tr>
+        </thead>
+        <tbody id="votedBody" class="divide-y divide-gray-200"></tbody>
+      </table>
+      
+      <button id="proceedToVote" class="w-full py-3 px-4 bg-indigo-600 text-white font-bold rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 mt-6">
+        Proceed to Vote
+      </button>
+    </div>
+
+    <!-- Voting Area -->
+    <div id="votingArea" class="hidden">
+      <h2 class="text-xl font-bold text-center text-indigo-600 mb-4" id="currentPosition">Position: </h2>
+      <div id="aspirantsList" class="space-y-4"></div>
+      <button id="submitVote" class="w-full py-3 px-4 bg-indigo-600 text-white font-bold rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 mt-6">Submit Vote</button>
+    </div>
+
+    <div id="successMessage" class="hidden text-green-600 font-semibold text-center mt-6">Voting complete! Thank you for your participation.</div>
+  </div>
+
+  <script type="module">
+    // Firebase imports
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js';
+    import { getDatabase, ref, get, update, set } from 'https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js';
+
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyD6k4OlLYnotuuChAjLBoHmqfv9-iwrlfY",
+      authDomain: "alfajiri-database.firebaseapp.com",
+      databaseURL: "https://alfajiri-database-default-rtdb.firebaseio.com",
+      projectId: "alfajiri-database",
+      storageBucket: "alfajiri-database.appspot.com",
+      messagingSenderId: "310417854615",
+      appId: "1:310417854615:web:6f65002a119caeaf9119d2",
+      measurementId: "G-21TBZCRBHM"
+    };
+
+    // Initialize Firebase
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
+
+    let positions = [];
+    let currentPositionIndex = 0;
+    let groupedAspirants = {};
+    let selectedVoter = null;
+
+    // Fetch voters and categorize into 'Voted' and 'Not Voted'
+    async function loadVoters() {
+      const votersRef = ref(database, "registrations/voters");
+      try {
+        const snapshot = await get(votersRef);
+        if (snapshot.exists()) {
+          const voters = snapshot.val();
+          const notVotedBody = document.getElementById("notVotedBody");
+          const votedBody = document.getElementById("votedBody");
+
+          notVotedBody.innerHTML = ""; // Clear any previous data
+          votedBody.innerHTML = ""; // Clear any previous data
+
+          Object.keys(voters).forEach((voter) => {
+            const voterData = voters[voter];
+            const tr = `
+              <tr>
+                <td class="px-4 py-2">${voter}</td>
+                <td class="px-4 py-2">${voterData.grade}</td>
+                <td class="px-4 py-2">
+                  <input type="radio" id="voter-${voter}" name="voter" value="${voter}" class="hidden">
+                  <label for="voter-${voter}" class="cursor-pointer text-indigo-600">Select</label>
+                </td>
+              </tr>
+            `;
+            if (voterData.voted) {
+              votedBody.innerHTML += tr; // Append to Voted table
+            } else {
+              notVotedBody.innerHTML += tr; // Append to Not Voted table
+            }
+          });
+        } else {
+          alert("No voters found in the database.");
+        }
+      } catch (error) {
+        console.error("Error fetching voters:", error);
+      }
+    }
+
+    // Fetch aspirants and group by position
+    async function loadPositionsAndAspirants() {
+      const aspirantsRef = ref(database, "registrations/aspirants");
+      try {
+        const snapshot = await get(aspirantsRef);
+
+        if (snapshot.exists()) {
+          const aspirants = snapshot.val();
+
+          // Group aspirants by position
+          for (const name in aspirants) {
+            const position = aspirants[name].position;
+            if (!groupedAspirants[position]) {
+              groupedAspirants[position] = [];
+            }
+            groupedAspirants[position].push({ name, ...aspirants[name] });
+          }
+
+          positions = Object.keys(groupedAspirants);
+        } else {
+          alert("No aspirants found in the database.");
+        }
+      } catch (error) {
+        console.error("Error fetching aspirants:", error);
+      }
+    }
+
+    // Show aspirants for the current position (all aspirants for this position)
+    function showPosition() {
+      const position = positions[currentPositionIndex];
+      const aspirants = groupedAspirants[position];
+      const votingArea = document.getElementById("votingArea");
+      const currentPosition = document.getElementById("currentPosition");
+      const aspirantsList = document.getElementById("aspirantsList");
+
+      currentPosition.textContent = `Position: ${position}`;
+      aspirantsList.innerHTML = aspirants
+        .map(
+          (aspirant) => `
+          <div class="flex items-center border border-gray-300 rounded-lg p-4">
+            <img src="${aspirant.image}" alt="${aspirant.name}" class="w-16 h-16 rounded-full mr-4">
+            <div class="flex-1">
+              <h4 class="text-lg font-bold">${aspirant.name}</h4>
+              <p class="text-sm text-gray-600">Grade: ${aspirant.grade}</p>
+            </div>
+            <input type="radio" id="aspirant-${aspirant.name}" name="aspirant" value="${aspirant.name}" class="hidden">
+            <label for="aspirant-${aspirant.name}" class="ml-auto cursor-pointer bg-indigo-500 text-white px-4 py-2 rounded-lg">
+              Select
+            </label>
+          </div>
+        `)
+        .join("");
+
+      votingArea.classList.remove("hidden");
+    }
+
+    // Handle vote submission with confirmation
+    document.getElementById("submitVote").addEventListener("click", async () => {
+      const selectedAspirant = document.querySelector('input[name="aspirant"]:checked');
+      if (!selectedAspirant) {
+        alert("Please select an aspirant to vote for.");
+        return;
+      }
+
+      const aspirantName = selectedAspirant.value;
+
+      // Confirm vote
+      const confirmation = window.confirm(`Do you want to vote for ${aspirantName}?`);
+      if (!confirmation) {
+        return; // Abort if the user cancels
+      }
+
+      const position = positions[currentPositionIndex];
+      const aspirantRef = ref(database, `registrations/aspirants/${aspirantName}`);
+
+      try {
+        const snapshot = await get(aspirantRef);
+        if (snapshot.exists()) {
+          const aspirantData = snapshot.val();
+
+          // Update vote count
+          const updatedVotes = (aspirantData.votes || 0) + 1;
+          await update(aspirantRef, { votes: updatedVotes });
+
+          // Mark the voter as having voted
+          await set(ref(database, `registrations/voters/${selectedVoter}`), { voted: true });
+
+          // Prevent moving to the next position without voting
+          currentPositionIndex++;
+          if (currentPositionIndex < positions.length) {
+            showPosition(); // Show the next position
+          } else {
+            document.getElementById("votingArea").classList.add("hidden");
+            document.getElementById("successMessage").classList.remove("hidden");
+            loadVoters(); // Refresh voter list to ensure no one votes twice
+            // Show Voted Table after vote is complete
+            document.getElementById("votedTable").classList.remove("hidden-table");
+          }
+        } else {
+          alert("Aspirant not found in the database.");
+        }
+      } catch (error) {
+        console.error("Error submitting vote:", error);
+      }
+    });
+
+    // Handle voter selection and proceed to vote
+    document.getElementById("proceedToVote").addEventListener("click", async () => {
+      const selectedVoterElement = document.querySelector('input[name="voter"]:checked');
+      if (!selectedVoterElement) {
+        alert("Please select a voter to proceed.");
+        return;
+      }
+      selectedVoter = selectedVoterElement.value;
+
+      await loadPositionsAndAspirants();
+      document.getElementById("voterSection").classList.add("hidden");
+      showPosition();
+    });
+
+    // Initialize voter list
+    loadVoters();
+  </script>
+</body>
+</html>
