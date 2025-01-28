@@ -4,88 +4,112 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Alfajiri Academy Malaba - Vote Tally and Voter Status</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
   <style>
     body {
       font-family: 'Inter', sans-serif;
-      background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+      background-color: #f0fdf4; /* Light green background */
     }
 
-    /* Custom scrollbar for better UI */
+    h1, h2, h3 {
+      font-weight: 700;
+    }
+
+    th {
+      background-color: #10b981; /* Green header */
+      color: white;
+    }
+
+    .table-container {
+      overflow-x: auto;
+    }
+
+    /* Scrollbar styling */
     ::-webkit-scrollbar {
       width: 8px;
     }
     ::-webkit-scrollbar-thumb {
-      background: #4f46e5;
+      background: #10b981; /* Green scrollbar */
       border-radius: 4px;
     }
     ::-webkit-scrollbar-thumb:hover {
-      background: #4338ca;
+      background: #059669; /* Darker green on hover */
+    }
+
+    /* Summary Section Styling */
+    #summary {
+      background-color: #10b981; /* Green background */
+      color: white; /* White text */
+      text-align: center; /* Center content */
+      font-size: 0.875rem; /* Small font size */
+      line-height: 1.5rem; /* Better spacing */
+    }
+
+    #summary p, #summary div {
+      margin: 0.5rem 0; /* Add spacing between lines */
     }
   </style>
 </head>
-<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
-  <div class="bg-white shadow-lg rounded-2xl p-6 w-full max-w-7xl">
-    <h1 class="text-5xl font-bold text-center text-indigo-600 mb-8">
-      Alfajiri Academy Malaba <br> <span class="text-3xl text-gray-800">Vote Tally and Voter Status</span>
+<body class="bg-gray-100 min-h-screen p-6 flex justify-center">
+  <div class="bg-white shadow-lg rounded-xl p-6 w-full max-w-7xl">
+    <!-- Header -->
+    <h1 class="text-center text-green-600 text-4xl md:text-5xl font-bold mb-8">
+      Alfajiri Academy Malaba
     </h1>
+    <p class="text-center text-gray-700 text-lg md:text-xl mb-10">
+      <strong>2025 STUDENT'S COUNCIL ELECTIONS</strong>
+    </p>
 
     <!-- Summary Section -->
-    <div id="summary" class="mb-8 p-4 bg-indigo-100 rounded-lg shadow-md">
-      <h2 class="text-3xl font-semibold text-indigo-700 mb-4">Summary</h2>
-      <p id="totalVoters" class="text-xl text-gray-700"></p>
-      <div id="leadingAspirants" class="space-y-4 mt-4"></div>
-    </div>
+    <section id="summary" class="mb-8 p-4 rounded-lg shadow">
+      <h2 class="text-2xl md:text-3xl font-bold mb-4">Summary</h2>
+      <p id="totalVoters" class="text-sm md:text-base font-medium"></p>
+      <div id="leadingAspirants" class="mt-4 space-y-2 text-sm md:text-base font-medium"></div>
+    </section>
 
     <!-- Results Section -->
-    <div class="mb-12">
-      <h2 class="text-3xl font-bold text-indigo-600 mb-6 text-center">Vote Tally</h2>
-      <div id="resultsTable" class="flex flex-col gap-8">
-        <!-- Position groups will be inserted here dynamically -->
-      </div>
-    </div>
+    <section class="mb-12">
+      <h2 class="text-3xl text-green-600 font-bold text-center mb-6">Vote Tally</h2>
+      <div id="resultsTable" class="flex flex-col gap-8"></div>
+    </section>
 
     <!-- Voter Status Section -->
-    <div>
-      <h2 class="text-3xl font-bold text-indigo-600 mb-6 text-center">Voter Status</h2>
+    <section>
+      <h2 class="text-3xl text-green-600 font-bold text-center mb-6">Voter Status</h2>
 
-      <!-- Voted Voters Table -->
-      <div class="overflow-x-auto mb-8">
-        <h3 class="text-2xl font-bold text-green-600 mb-4">Voted</h3>
+      <!-- Voted Table -->
+      <div class="table-container mb-8">
+        <h3 class="text-2xl text-green-600 font-bold mb-4">Voted</h3>
         <table class="min-w-full bg-white border border-gray-300 rounded-lg shadow-sm">
-          <thead class="bg-indigo-100">
+          <thead>
             <tr>
-              <th class="px-6 py-3 border-b text-left font-semibold">#</th>
-              <th class="px-6 py-3 border-b text-left font-semibold">Voter Name</th>
-              <th class="px-6 py-3 border-b text-left font-semibold">Grade</th>
-              <th class="px-6 py-3 border-b text-left font-semibold">Status</th>
+              <th class="px-6 py-3 text-left font-semibold">S/N</th>
+              <th class="px-6 py-3 text-left font-semibold">Voter Name</th>
+              <th class="px-6 py-3 text-left font-semibold">Grade</th>
+              <th class="px-6 py-3 text-left font-semibold">Status</th>
             </tr>
           </thead>
-          <tbody id="votedTable" class="bg-white divide-y divide-gray-200">
-            <!-- Voted data will be inserted here dynamically -->
-          </tbody>
+          <tbody id="votedTable" class="divide-y divide-gray-200"></tbody>
         </table>
       </div>
 
-      <!-- Not Voted Voters Table -->
-      <div class="overflow-x-auto">
-        <h3 class="text-2xl font-bold text-red-600 mb-4">Not Voted</h3>
+      <!-- Not Voted Table -->
+      <div class="table-container">
+        <h3 class="text-2xl text-red-600 font-bold mb-4">Not Voted</h3>
         <table class="min-w-full bg-white border border-gray-300 rounded-lg shadow-sm">
-          <thead class="bg-indigo-100">
+          <thead>
             <tr>
-              <th class="px-6 py-3 border-b text-left font-semibold">#</th>
-              <th class="px-6 py-3 border-b text-left font-semibold">Voter Name</th>
-              <th class="px-6 py-3 border-b text-left font-semibold">Grade</th>
-              <th class="px-6 py-3 border-b text-left font-semibold">Status</th>
+              <th class="px-6 py-3 text-left font-semibold">S/N</th>
+              <th class="px-6 py-3 text-left font-semibold">Voter Name</th>
+              <th class="px-6 py-3 text-left font-semibold">Grade</th>
+              <th class="px-6 py-3 text-left font-semibold">Status</th>
             </tr>
           </thead>
-          <tbody id="notVotedTable" class="bg-white divide-y divide-gray-200">
-            <!-- Not voted data will be inserted here dynamically -->
-          </tbody>
+          <tbody id="notVotedTable" class="divide-y divide-gray-200"></tbody>
         </table>
       </div>
-    </div>
+    </section>
   </div>
 
   <script type="module">
