@@ -20,6 +20,22 @@
     .hidden-table {
       display: none;
     }
+     #proceedToVote {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: auto;
+    padding: 12px 24px;
+    font-size: 18px;
+    z-index: 50;
+  }
+
+   .aspirant-photo {
+    width: 150px; /* Increased size */
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
   </style>
 </head>
 <body class="bg-gray-100 min-h-screen flex items-center justify-center">
@@ -48,9 +64,9 @@
         <tbody id="notVotedBody" class="divide-y divide-gray-200"></tbody>
       </table>
       
-      <button id="proceedToVote" class="w-full py-3 px-4 bg-indigo-600 text-white font-bold rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 mt-6">
-        Proceed to Vote
-      </button>
+      <button id="proceedToVote" class="bg-indigo-600 text-white font-bold rounded-lg shadow-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+  Proceed to Vote
+</button>
     </div>
 
     <!-- Voting Area -->
@@ -185,37 +201,26 @@
 
 
    function showPosition() {
-  const position = positions[currentPositionIndex];
-  const aspirants = groupedAspirants[position];
-  const aspirantsList = document.getElementById("aspirantsList");
+    const position = positions[currentPositionIndex];
+    const aspirants = groupedAspirants[position];
+    const aspirantsList = document.getElementById("aspirantsList");
 
-  // Update the position header
-  document.getElementById("currentPosition").textContent = `Position: ${position}`;
+    document.getElementById("currentPosition").textContent = `Position: ${position}`;
 
-  // Generate the list of aspirants with radio buttons
-  aspirantsList.innerHTML = aspirants.map((aspirant) => `
-    <div class="flex items-center border border-gray-300 rounded-lg p-4">
-      <img src="${aspirant.aspirantImageUrl || 'https://via.placeholder.com/150'}" alt="${aspirant.name}" class="w-16 h-16 rounded-full mr-4">
-      <div class="flex-1">
-        <h4 class="text-lg font-bold">${aspirant.name}</h4>
-        <p class="text-sm text-gray-600">Grade: ${aspirant.grade}</p>
+    aspirantsList.innerHTML = aspirants.map((aspirant) => `
+      <div class="flex items-center border border-gray-300 rounded-lg p-4">
+        <img src="${aspirant.aspirantImageUrl || 'https://via.placeholder.com/150'}" alt="${aspirant.name}" class="aspirant-photo mr-4">
+        <div class="flex-1">
+          <h4 class="text-lg font-bold">${aspirant.name}</h4>
+          <p class="text-sm text-gray-600">Grade: ${aspirant.grade}</p>
+        </div>
+        <input type="radio" id="aspirant-${aspirant.name}" name="aspirant" value="${aspirant.name}" class="cursor-pointer">
+        <label for="aspirant-${aspirant.name}" class="ml-2 cursor-pointer bg-indigo-500 text-white px-4 py-2 rounded-lg">Select</label>
       </div>
-      <input 
-        type="radio" 
-        id="aspirant-${aspirant.name}" 
-        name="aspirant" 
-        value="${aspirant.name}" 
-        class="cursor-pointer"
-      >
-      <label for="aspirant-${aspirant.name}" class="ml-2 cursor-pointer bg-indigo-500 text-white px-4 py-2 rounded-lg">
-        Select
-      </label>
-    </div>
-  `).join("");
-
-  // Show the voting area
-  document.getElementById("votingArea").classList.remove("hidden");
-}
+    `).join("");
+    
+    document.getElementById("votingArea").classList.remove("hidden");
+  }
 
 
     document.getElementById("submitVote").addEventListener("click", async () => {
