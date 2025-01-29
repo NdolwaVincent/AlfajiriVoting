@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Election Summary</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+    }
+    .floating-btn {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #4f46e5;
+      color: white;
+      padding: 15px 20px;
+      border-radius: 50%;
+      box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+      cursor: pointer;
+      transition: background-color 0.3s;
+    }
+    .floating-btn:hover {
+      background-color: #4338ca;
+    }
+    .aspirant-img {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+  </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col items-center p-4">
+  <div class="bg-white shadow-lg rounded-2xl p-6 w-full max-w-7xl">
+    <h1 class="text-center text-green-600 text-4xl font-bold mb-8">Election Summary</h1>
+    <div id="summaryTable" class="space-y-6"></div>
+  </div>
+  
+  <button class="floating-btn" onclick="openSummaryPage()">📊</button>
+
+  <script type="module">
+   import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js';
+import { getDatabase, ref, onValue } from 'https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js';
+
+const firebaseConfig = {
+  apiKey: "AIzaSyD6k4OlLYnotuuChAjLBoHmqfv9-iwrlfY",
+  authDomain: "alfajiri-database.firebaseapp.com",
+  databaseURL: "https://alfajiri-database-default-rtdb.firebaseio.com",
+  projectId: "alfajiri-database",
+  storageBucket: "alfajiri-database.appspot.com",
+  messagingSenderId: "310417854615",
+  appId: "1:310417854615:web:6f65002a119caeaf9119d2",
+  measurementId: "G-21TBZCRBHM"
+};
+
+const app = initializeApp(firebaseConfig);
+const database = getDatabase(app);
+
+function loadSummary() {
+  const aspirantsRef = ref(database, "registrations/aspirants");
+
+  onValue(aspirantsRef, (snapshot) => {
+    if (snapshot.exists()) {
+      const aspirants = Object.values(snapshot.val());
+      const groupedByPosition = {};
+
+      // Group aspirants by position
+      aspirants.forEach(aspirant => {
+        if (!groupedByPosition[aspirant.position]) {
+          groupedByPosition[aspirant.position] = [];
+        }
+        groupedByPosition[aspirant.position].push(aspirant);
+      });
+
+      const summaryTable = document.getElementById("summaryTable");
+      summaryTable.innerHTML = "";
+
+      Object.keys(groupedByPosition).forEach(position => {
+        const positionAspirants = groupedByPosition[position];
+
+        // Calculate total votes for the current position
+        const totalVotesForPosition = positionAspirants.reduce((sum, a) => sum + (a.votes || 0), 0);
+
+        positionAspirants.sort((a, b) => (b.votes || 0) - (a.votes || 0));
+
+        let positionHTML = `<div class='bg-white p-4 rounded-lg shadow-md text-center'>
+          <h3 class='text-xl font-bold text-indigo-800 mb-3'>${position}</h3>
+          <div class='overflow-x-auto'>
+            <table class='min-w-full bg-white border border-gray-200'>
+              <thead>
+                <tr class='bg-indigo-100'>
+                  <th class='p-3 border'>S/N</th>
+                  <th class='p-3 border'>Image</th>
+                  <th class='p-3 border'>Name</th>
+                  <th class='p-3 border'>Grade</th>
+                  <th class='p-3 border'>Votes</th>
+                  <th class='p-3 border'>Percentage</th>
+                </tr>
+              </thead>
+              <tbody>`;
+
+        positionAspirants.forEach((aspirant, index) => {
+          const percentage = totalVotesForPosition 
+            ? ((aspirant.votes || 0) / totalVotesForPosition * 100).toFixed(2) 
+            : 0;
+          positionHTML += `
+                <tr class='border'>
+                  <td class='p-3 border text-center'>${index + 1}</td>
+                  <td class='p-3 border text-center'><img src='${aspirant.aspirantImageUrl || "https://via.placeholder.com/100"}' alt='Aspirant' class='aspirant-img mx-auto'></td>
+                  <td class='p-3 border text-center font-bold'>${aspirant.fullName}</td>
+                  <td class='p-3 border text-center'>${aspirant.grade || "N/A"}</td>
+                  <td class='p-3 border text-center'>${aspirant.votes || 0}</td>
+                  <td class='p-3 border text-center'>${percentage}%</td>
+                </tr>`;
+        });
+
+        positionHTML += `</tbody></table></div></div>`;
+        summaryTable.innerHTML += positionHTML;
+      });
+    } else {
+      document.getElementById("summaryTable").innerHTML = "<p class='text-center text-gray-500'>No data available.</p>";
+    }
+  }, (error) => {
+    console.error("Error loading summary:", error);
+  });
+}
+
+function openSummaryPage() {
+  window.location.href = "summary.html";
+}
+
+loadSummary();
+
+  </script>
+</body>
+</html>
