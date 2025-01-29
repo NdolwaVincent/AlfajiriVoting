@@ -99,186 +99,171 @@
         </table>
       </div>
     </div>
+    <!-- Floating Button -->
+    <a href="summ.html" class="fixed bottom-8 right-8 bg-blue-600 text-white rounded-full shadow-lg w-16 h-16 flex items-center justify-center text-2xl hover:bg-blue-700 transition duration-300">
+      ➜
+    </a>
   </div>
 
   <script type="module">
-    // Firebase imports
-    import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js';
-    import { getDatabase, ref, get, onValue } from 'https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js';
-
-    // Firebase configuration
-    const firebaseConfig = {
-      apiKey: "AIzaSyD6k4OlLYnotuuChAjLBoHmqfv9-iwrlfY",
-      authDomain: "alfajiri-database.firebaseapp.com",
-      databaseURL: "https://alfajiri-database-default-rtdb.firebaseio.com",
-      projectId: "alfajiri-database",
-      storageBucket: "alfajiri-database.appspot.com",
-      messagingSenderId: "310417854615",
-      appId: "1:310417854615:web:6f65002a119caeaf9119d2",
-      measurementId: "G-21TBZCRBHM"
-    };
-
-    // Initialize Firebase
-    const app = initializeApp(firebaseConfig);
-    const database = getDatabase(app);
-
-    // Fetch and display vote tally with percentage
-    async function loadVoteTally() {
-      const aspirantsRef = ref(database, "registrations/aspirants");
-      try {
-        const snapshot = await get(aspirantsRef);
-        if (snapshot.exists()) {
-          const aspirants = snapshot.val();
-          const resultsTable = document.getElementById("resultsTable");
-          resultsTable.innerHTML = "";
-
-          // Group aspirants by position
-          const groupedByPosition = {};
-
-          Object.keys(aspirants).forEach((key) => {
-            const aspirant = aspirants[key];
-            if (!groupedByPosition[aspirant.position]) {
-              groupedByPosition[aspirant.position] = [];
-            }
-            groupedByPosition[aspirant.position].push(aspirant);
-          });
-
-          // Calculate total votes
-          let totalVotes = 0;
-          Object.keys(groupedByPosition).forEach((position) => {
-            groupedByPosition[position].forEach((aspirant) => {
-              totalVotes += aspirant.votes || 0;
-            });
-          });
-
-          // Display aspirants' details grouped by position with percentages
-          Object.keys(groupedByPosition).forEach((position) => {
-            const group = groupedByPosition[position];
-            let groupHTML = `
-              <div class="bg-white p-4 rounded-lg shadow-md text-center">
-                <h3 class="text-xl font-bold text-green-600 mb-3">${position}</h3>
-                <div class="space-y-4">
-            `;
-
-            group.forEach((aspirant) => {
-              const percentage = totalVotes > 0 ? ((aspirant.votes || 0) / totalVotes * 100).toFixed(2) : 0;
-              groupHTML += `
-                <div class="bg-gray-50 shadow-md rounded-lg p-4 flex items-center">
-                  <img src="${aspirant.aspirantImageUrl}" alt="${aspirant.fullName}" class="w-16 h-16 rounded-full mr-4">
-                  <div class="flex-1">
-                    <h4 class="text-lg font-bold">${aspirant.fullName}</h4>
-                    <p class="text-sm text-gray-600">Grade: ${aspirant.grade}</p>
-                  </div>
-                  <div class="text-indigo-600 font-bold text-lg">
-                    Votes: ${aspirant.votes || 0} (${percentage}%)
-                  </div>
-                </div>
-              `;
-            });
-
-            groupHTML += '</div></div>';
-            resultsTable.innerHTML += groupHTML;
-          });
-        } else {
-          alert("No aspirants found in the database.");
-        }
-      } catch (error) {
-        console.error("Error fetching vote tally:", error);
-      }
-    }
-
-    // Fetch and display voter status with grade, numbering, and separate tables for voted and not voted
-    async function loadVoterStatus() {
-      const votersRef = ref(database, "registrations/voters");
-      try {
-        const snapshot = await get(votersRef);
-        if (snapshot.exists()) {
-          const voters = snapshot.val();
-
-          const votedTable = document.getElementById("votedTable");
-          const notVotedTable = document.getElementById("notVotedTable");
-
-          votedTable.innerHTML = "";
-          notVotedTable.innerHTML = "";
-
-          let countVoted = 1;
-          let countNotVoted = 1;
-
-          // Display voters' data in separate tables based on their vote status
-          Object.keys(voters).forEach((voter) => {
-            const voterData = voters[voter];
-            const row = `
-              <tr>
-                <td class="px-4 py-2 border-b text-left">${voterData.voted ? countVoted++ : countNotVoted++}</td>
-                <td class="px-4 py-2 border-b text-left">${voter}</td>
-                <td class="px-4 py-2 border-b text-left">${voterData.grade || 'N/A'}</td> <!-- Adjust to use gradeLevel -->
-                <td class="px-4 py-2 border-b text-left">${voterData.voted ? 'Voted' : 'Not Voted'}</td>
-              </tr>
-            `;
-
-            if (voterData.voted) {
-              votedTable.innerHTML += row;
-            } else {
-              notVotedTable.innerHTML += row;
-            }
-          });
-        } else {
-          alert("No voters found in the database.");
-        }
-      } catch (error) {
-        console.error("Error fetching voter status:", error);
-      }
-    }
-
-    // Real-time updates for the vote tally
-    const aspirantsRef = ref(database, "registrations/aspirants");
-    onValue(aspirantsRef, loadVoteTally);  // Listen for changes to aspirants' data
-
-    // Real-time updates for voter status
-    const votersRef = ref(database, "registrations/voters");
-    onValue(votersRef, loadVoterStatus);  // Listen for changes to voters' data
-async function loadSummary() {
-      const aspirantsRef = ref(database, "registrations/aspirants");
-      const votersRef = ref(database, "registrations/voters");
-      let totalVoters = 0, voted = 0, notVoted = 0, leadingCandidate = "N/A", maxVotes = 0;
-
-      try {
-        const aspirantsSnapshot = await get(aspirantsRef);
-        const votersSnapshot = await get(votersRef);
-
-        if (aspirantsSnapshot.exists()) {
-          const aspirants = aspirantsSnapshot.val();
-          Object.values(aspirants).forEach(aspirant => {
-            if ((aspirant.votes || 0) > maxVotes) {
-              maxVotes = aspirant.votes || 0;
-              leadingCandidate = `${aspirant.fullName} (${aspirant.position})`;
-            }
-          });
-        }
-
-        if (votersSnapshot.exists()) {
-          const voters = votersSnapshot.val();
-          totalVoters = Object.keys(voters).length;
-          Object.values(voters).forEach(voter => {
-            if (voter.voted) voted++;
-          });
-          notVoted = totalVoters - voted;
-        }
-
-        document.getElementById("leadingCandidate").textContent = leadingCandidate;
-        document.getElementById("votedCount").textContent = `${voted} out of ${totalVoters}`;
-        document.getElementById("notVotedCount").textContent = notVoted;
-
-      } catch (error) {
-        console.error("Error loading summary:", error);
-      }
-    }
     
+  // Firebase imports
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js';
+  import { getDatabase, ref, onValue } from 'https://www.gstatic.com/firebasejs/9.17.1/firebase-database.js';
 
-    loadSummary();
-    // Initialize the results page
-    loadVoteTally();
-    loadVoterStatus();
-  </script>
+  // Firebase configuration
+  const firebaseConfig = {
+    apiKey: "AIzaSyD6k4OlLYnotuuChAjLBoHmqfv9-iwrlfY",
+    authDomain: "alfajiri-database.firebaseapp.com",
+    databaseURL: "https://alfajiri-database-default-rtdb.firebaseio.com",
+    projectId: "alfajiri-database",
+    storageBucket: "alfajiri-database.appspot.com",
+    messagingSenderId: "310417854615",
+    appId: "1:310417854615:web:6f65002a119caeaf9119d2",
+    measurementId: "G-21TBZCRBHM"
+  };
+
+  // Initialize Firebase
+  const app = initializeApp(firebaseConfig);
+  const database = getDatabase(app);
+
+  // Live Vote Tally Updates
+  const aspirantsRef = ref(database, "registrations/aspirants");
+  onValue(aspirantsRef, (snapshot) => {
+    if (snapshot.exists()) {
+      const aspirants = snapshot.val();
+      const resultsTable = document.getElementById("resultsTable");
+      resultsTable.innerHTML = "";
+
+      const groupedByPosition = {};
+      Object.keys(aspirants).forEach((key) => {
+        const aspirant = aspirants[key];
+        if (!groupedByPosition[aspirant.position]) {
+          groupedByPosition[aspirant.position] = [];
+        }
+        groupedByPosition[aspirant.position].push(aspirant);
+      });
+
+      Object.keys(groupedByPosition).forEach((position) => {
+        const group = groupedByPosition[position];
+        let totalPositionVotes = group.reduce((sum, aspirant) => sum + (aspirant.votes || 0), 0);
+
+        let groupHTML = `
+          <div class="bg-white p-4 rounded-lg shadow-md text-center">
+            <h3 class="text-xl font-bold text-green-600 mb-3">${position}</h3>
+            <div class="space-y-4">
+        `;
+
+        group.forEach((aspirant) => {
+          const percentage = totalPositionVotes > 0 
+            ? ((aspirant.votes || 0) / totalPositionVotes * 100).toFixed(2) 
+            : 0;
+
+          groupHTML += `
+            <div class="bg-gray-50 shadow-md rounded-lg p-4 flex items-center">
+              <img src="${aspirant.aspirantImageUrl}" alt="${aspirant.fullName}" class="w-16 h-16 rounded-full mr-4">
+              <div class="flex-1">
+                <h4 class="text-lg font-bold">${aspirant.fullName}</h4>
+                <p class="text-sm text-gray-600">Grade: ${aspirant.grade}</p>
+              </div>
+              <div class="text-indigo-600 font-bold text-lg">
+                Votes: ${aspirant.votes || 0} (${percentage}%)
+              </div>
+            </div>
+          `;
+        });
+
+        groupHTML += '</div></div>';
+        resultsTable.innerHTML += groupHTML;
+      });
+    }
+  });
+
+  // Live Voter Status Updates
+  const votersRef = ref(database, "registrations/voters");
+  onValue(votersRef, (snapshot) => {
+    if (snapshot.exists()) {
+      const voters = snapshot.val();
+
+      const votedTable = document.getElementById("votedTable");
+      const notVotedTable = document.getElementById("notVotedTable");
+
+      votedTable.innerHTML = "";
+      notVotedTable.innerHTML = "";
+
+      let countVoted = 1;
+      let countNotVoted = 1;
+
+      Object.keys(voters).forEach((voter) => {
+        const voterData = voters[voter];
+        const row = `
+          <tr>
+            <td class="px-4 py-2 border-b text-left">${voterData.voted ? countVoted++ : countNotVoted++}</td>
+            <td class="px-4 py-2 border-b text-left">${voter}</td>
+            <td class="px-4 py-2 border-b text-left">${voterData.grade || 'N/A'}</td>
+            <td class="px-4 py-2 border-b text-left">${voterData.voted ? 'Voted' : 'Not Voted'}</td>
+          </tr>
+        `;
+
+        if (voterData.voted) {
+          votedTable.innerHTML += row;
+        } else {
+          notVotedTable.innerHTML += row;
+        }
+      });
+    }
+  });
+
+  // Live Summary Updates
+  onValue(aspirantsRef, async () => {
+    updateSummary();
+  });
+  onValue(votersRef, async () => {
+    updateSummary();
+  });
+
+  function loadSummary() {
+  const aspirantsRef = ref(database, "registrations/aspirants");
+  const votersRef = ref(database, "registrations/voters");
+
+  onValue(aspirantsRef, (aspirantsSnapshot) => {
+    onValue(votersRef, (votersSnapshot) => {
+      let totalVoters = 0, voted = 0, notVoted = 0;
+      let leadingCandidate = "N/A";
+      let maxVotes = 0;
+
+      // Process aspirants data to find the leading candidate
+      if (aspirantsSnapshot.exists()) {
+        const aspirants = aspirantsSnapshot.val();
+        Object.values(aspirants).forEach(aspirant => {
+          if ((aspirant.votes || 0) > maxVotes) {
+            maxVotes = aspirant.votes || 0;
+            leadingCandidate = `${aspirant.fullName} (${aspirant.position})`;
+          }
+        });
+      }
+
+      // Process voters data
+      if (votersSnapshot.exists()) {
+        const voters = votersSnapshot.val();
+        totalVoters = Object.keys(voters).length;
+        Object.values(voters).forEach(voter => {
+          if (voter.voted) voted++;
+        });
+        notVoted = totalVoters - voted;
+      }
+
+      // Update the UI with real-time data
+      document.getElementById("leadingCandidate").textContent = leadingCandidate;
+      document.getElementById("votedCount").textContent = `${voted} out of ${totalVoters}`;
+      document.getElementById("notVotedCount").textContent = notVoted;
+    });
+  });
+}
+
+// Call loadSummary() once to start listening for real-time updates
+loadSummary();
+
+</script>
 </body>
 </html>
